@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <div>
+        <button onclick="startGame()">Start</button>
+    </div>
+
+    <canvas id="myCanvas" width="600" height="300" style="border:1px solid #000000;">
+    </canvas>
+    <br>
+    <button onclick="up()">UP</button>
+    <br>
+    <button onclick="down()">Down</button>
+</head>
+<body>
+<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="player.js"></script>
+<script type="text/javascript" src="obstacle.js"></script>
+<script type="text/javascript" src="obstacle2.js"></script>
+<script>
+    var Player = blockerApp.player();
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    var frameCount = 0;
+    var obs;
+    var obs2;
+
+    function startGame() {
+        setInterval(function () {
+            clear();
+            draw();
+            countFrames();
+        }, 10);
+        //ctx.fillRect(10,10,50,50);
+    }
+
+    function clear() {
+        ctx.clearRect(0, 0, c.width, c.height);
+    }
+
+    function countFrames() {
+        frameCount++;
+
+        if (frameCount === 200) {
+            frameCount = 0;
+            var rnd = Math.floor((Math.random() * 200) + 1);
+            obs = new blockerApp.obstacle(rnd);
+            obs2 = new blockerApp.obstacle2(rnd);
+        }
+        if (obs) {
+            ctx.fillRect(obs.x -= 3, obs.y, obs.width, obs.height);
+            ctx.fillRect(obs2.x -= 3, obs2.y, obs2.width, obs2.height);
+        }
+    }
+
+    function draw() {
+
+        ctx.fillRect(Player.x, Player.y, Player.width, Player.height);
+    }
+
+    function up() {
+        if (Player.y >= 5) {
+            Player.y -= 10;
+        }
+    }
+
+    function down() {
+        if (Player.y <= 250) {
+            Player.y += 10;
+        }
+
+    }
+
+
+</script>
+</body>
+</html>
