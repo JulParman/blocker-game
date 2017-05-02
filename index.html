@@ -25,13 +25,20 @@
     var frameCount = 0;
     var obs;
     var obs2;
+    var img = new Image();
+    document.onkeydown = keyBoard;
+
 
     function startGame() {
-        setInterval(function () {
-            clear();
-            draw();
-            countFrames();
-        }, 10);
+        img.onload = function () {
+            setInterval(function () {
+                clear();
+                draw();
+                countFrames();
+                checkCollision();
+            }, 20);
+        };
+        img.src = "favicon.png";
     }
 
     function clear() {
@@ -51,18 +58,34 @@
             ctx.fillRect(obs.x -= 3, obs.y, obs.width, obs.height);
             ctx.fillRect(obs2.x -= 3, obs2.y, obs2.width, obs2.height);
         }
-        else if (Player.y === obs.y && Player.x === obs.x + 10 || Player.y === obs2.y && Player.x === obs2.x + 10){
-            console.log("Game over!!!!!!");
+
+    }
+
+    function checkCollision() {
+        if (!(Player.x > obs.x + obs.width || Player.x + Player.width < obs.x || Player.y > obs.y + obs.height || Player.y + Player.height < obs.y)) {
+            gameOver();
+        }
+        else if (!(Player.x > obs2.x + obs2.width || Player.x + Player.width < obs2.x || Player.y > obs2.y + obs2.height || Player.y + Player.height < obs2.y)) {
+            gameOver();
         }
     }
 
     function gameOver() {
-
+        ctx.font = "30px Arial";
+        ctx.fillText("Game over!", 200, 50);
     }
 
     function draw() {
+        ctx.drawImage(img, Player.x, Player.y, Player.width, Player.height);
+    }
 
-        ctx.fillRect(Player.x, Player.y, Player.width, Player.height);
+    function keyBoard(e) {
+        if (e.keyCode === 38) {
+            Player.y -= 10;
+        }
+        if (e.keyCode === 40) {
+            Player.y += 10;
+        }
     }
 
     function up() {
@@ -75,7 +98,6 @@
         if (Player.y <= 250) {
             Player.y += 10;
         }
-
     }
 
 
