@@ -5,13 +5,10 @@
     <div>
         <button onclick="startGame()">Start</button>
     </div>
-
     <canvas id="myCanvas" width="600" height="300" style="border:1px solid #000000;">
     </canvas>
     <br>
-    <button onclick="up()">UP</button>
-    <br>
-    <button onclick="down()">Down</button>
+    <button onmousedown="up()" onmouseup="down()">UP</button>
 </head>
 <body>
 <script type="text/javascript" src="app.js"></script>
@@ -26,16 +23,20 @@
     var obs;
     var obs2;
     var img = new Image();
-    document.onkeydown = keyBoard;
-
+    var points = 0;
+    var gameover = false;
+    //document.onkeydown = keyBoard;
 
     function startGame() {
+        gameover = false;
         img.onload = function () {
             setInterval(function () {
                 clear();
                 draw();
                 countFrames();
                 checkCollision();
+                countPoints();
+                gravitation();
             }, 20);
         };
         img.src = "favicon.png";
@@ -49,6 +50,7 @@
         frameCount++;
 
         if (frameCount === 200) {
+            points++;
             frameCount = 0;
             var rnd = Math.floor((Math.random() * 200) + 1);
             obs = new blockerApp.obstacle(rnd);
@@ -61,6 +63,25 @@
 
     }
 
+    function hitBottom(){
+        var rockbottom = 300 - Player.height;
+        var top = 0;
+        if (Player.y > rockbottom) {
+            Player.y = rockbottom;
+            Player.gravitySpeed = 0;
+        }
+        else if(Player.y < top){
+            Player.y = top;
+            Player.gravitySpeed = 0;
+        }
+    }
+
+    function gravitation() {
+        Player.gravitySpeed += Player.gravity;
+        Player.y += Player.gravitySpeed;
+        hitBottom();
+    }
+
     function checkCollision() {
         if (!(Player.x > obs.x + obs.width || Player.x + Player.width < obs.x || Player.y > obs.y + obs.height || Player.y + Player.height < obs.y)) {
             gameOver();
@@ -70,7 +91,15 @@
         }
     }
 
+    function countPoints() {
+        if (gameover === false) {
+            ctx.font = "20px Arial";
+            ctx.fillText("Points:" + points, 500, 20);
+        }
+    }
+
     function gameOver() {
+        gameover = true;
         ctx.font = "30px Arial";
         ctx.fillText("Game over!", 200, 50);
     }
@@ -79,25 +108,26 @@
         ctx.drawImage(img, Player.x, Player.y, Player.width, Player.height);
     }
 
-    function keyBoard(e) {
+    document.body.onkeydown = function keyBoard(e) {
+        //upbutton
         if (e.keyCode === 38) {
-            Player.y -= 10;
+            Player.gravity = -0.2;
         }
-        if (e.keyCode === 40) {
-            Player.y += 10;
+    };
+
+    document.body.onkeyup = function keyBoard(e) {
+        //upbutton
+        if (e.keyCode === 38) {
+            Player.gravity = 0.09;
         }
-    }
+    };
 
     function up() {
-        if (Player.y >= 5) {
-            Player.y -= 10;
-        }
+            Player.gravity = -0.2;
     }
 
     function down() {
-        if (Player.y <= 250) {
-            Player.y += 10;
-        }
+        Player.gravity = 0.09;
     }
 
 
