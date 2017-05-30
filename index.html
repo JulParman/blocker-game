@@ -22,21 +22,30 @@
     var frameCount = 0;
     var obs;
     var obs2;
+    var obs3;
+    var obs4;
     var img = new Image();
     var points = 0;
     var gameover = false;
+    var clock;
     //document.onkeydown = keyBoard;
 
     function startGame() {
         gameover = false;
         img.onload = function () {
-            setInterval(function () {
-                clear();
-                draw();
-                countFrames();
-                checkCollision();
-                countPoints();
-                gravitation();
+            clock = setInterval(function () {
+                if (gameover === false) {
+                    clear();
+                    draw();
+                    drawObs();
+                    countFrames();
+                    checkCollision();
+                    countPoints();
+                    gravitation();
+                } else {
+                    clearInterval(clock);
+                    countPoints();
+                }
             }, 20);
         };
         img.src = "favicon.png";
@@ -48,29 +57,51 @@
 
     function countFrames() {
         frameCount++;
-
-        if (frameCount === 200) {
-            points++;
-            frameCount = 0;
-            var rnd = Math.floor((Math.random() * 200) + 1);
-            obs = new blockerApp.obstacle(rnd);
-            obs2 = new blockerApp.obstacle2(rnd);
+        var rnd2 = Math.floor((Math.random() * 100) + 1);
+        var rnd3 = Math.floor((Math.random() * 200) + 150);
+        if (frameCount === rnd2) {
+            spawnObj1();
         }
-        if (obs) {
+        if (frameCount === rnd3) {
+            spawnObj2();
+            points++;
+        }
+        if (frameCount === 300) {
+            frameCount = 0;
+        }
+    }
+
+    function drawObs() {
+        if (obs && obs2) {
             ctx.fillRect(obs.x -= 3, obs.y, obs.width, obs.height);
             ctx.fillRect(obs2.x -= 3, obs2.y, obs2.width, obs2.height);
         }
-
+        if (obs3 && obs4) {
+            ctx.fillRect(obs3.x -= 3, obs3.y, obs3.width, obs3.height);
+            ctx.fillRect(obs4.x -= 3, obs4.y, obs4.width, obs4.height);
+        }
     }
 
-    function hitBottom(){
+    function spawnObj1() {
+        var rnd = Math.floor((Math.random() * 200) + 1);
+        obs = new blockerApp.obstacle(rnd);
+        obs2 = new blockerApp.obstacle2(rnd);
+    }
+
+    function spawnObj2() {
+        var rnd = Math.floor((Math.random() * 200) + 1);
+        obs3 = new blockerApp.obstacle(rnd);
+        obs4 = new blockerApp.obstacle2(rnd);
+    }
+
+    function hitBottom() {
         var rockbottom = 300 - Player.height;
         var top = 0;
         if (Player.y > rockbottom) {
             Player.y = rockbottom;
             Player.gravitySpeed = 0;
         }
-        else if(Player.y < top){
+        else if (Player.y < top) {
             Player.y = top;
             Player.gravitySpeed = 0;
         }
@@ -82,6 +113,7 @@
         hitBottom();
     }
 
+
     function checkCollision() {
         if (!(Player.x > obs.x + obs.width || Player.x + Player.width < obs.x || Player.y > obs.y + obs.height || Player.y + Player.height < obs.y)) {
             gameOver();
@@ -89,19 +121,25 @@
         else if (!(Player.x > obs2.x + obs2.width || Player.x + Player.width < obs2.x || Player.y > obs2.y + obs2.height || Player.y + Player.height < obs2.y)) {
             gameOver();
         }
+        else if (!(Player.x > obs3.x + obs3.width || Player.x + Player.width < obs3.x || Player.y > obs3.y + obs3.height || Player.y + Player.height < obs3.y)) {
+            gameOver();
+        }
+        else if (!(Player.x > obs4.x + obs4.width || Player.x + Player.width < obs4.x || Player.y > obs4.y + obs4.height || Player.y + Player.height < obs4.y)) {
+            gameOver();
+        }
     }
 
     function countPoints() {
-        if (gameover === false) {
-            ctx.font = "20px Arial";
-            ctx.fillText("Points:" + points, 500, 20);
-        }
+        ctx.font = "20px Arial";
+        ctx.fillText("Points:" + points, 500, 20);
     }
 
     function gameOver() {
         gameover = true;
         ctx.font = "30px Arial";
         ctx.fillText("Game over!", 200, 50);
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
     }
 
     function draw() {
@@ -123,7 +161,7 @@
     };
 
     function up() {
-            Player.gravity = -0.2;
+        Player.gravity = -0.2;
     }
 
     function down() {
