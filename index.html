@@ -28,6 +28,9 @@
     var points = 0;
     var gameover = false;
     var clock;
+    var first = true;
+    var rnd3;
+    var rnd4;
     //document.onkeydown = keyBoard;
 
     function startGame() {
@@ -58,27 +61,23 @@
 
     function countFrames() {
         frameCount++;
-        var rnd3 = Math.floor((Math.random() * 100) + 1);
-        var rnd4 = Math.floor((Math.random() * 200) + 150);
+        if(first){
+            rnd3 = Math.floor((Math.random() * 130) + 20);
+            rnd4 = Math.floor((Math.random() * 250) + 190);
+            first = false;
+        }
         if (frameCount === rnd3) {
             spawnObj1();
         }
         if (frameCount === rnd4) {
             spawnObj2();
         }
-        if (frameCount === 400) {
+        else if(frameCount === 300){
             frameCount = 0;
+            rnd3 = Math.floor((Math.random() * 130) + 20);
+            rnd4 = Math.floor((Math.random() * 250) + 190);
         }
-        /*if(Math.random()<0.1){
-            if(obs.x <= 0  && obs2.x <= 0){
-                spawnObj2();
 
-            }else{
-                spawnObj1();
-
-            }
-
-        }*/
     }
 
     function drawObs() {
@@ -133,7 +132,7 @@
         else if (Player.x === obs3.x + obs3.width && Player.y > obs3.y + obs3.height) {
             points++;
         }
-        else if (Player.x === obs4.x + obs4.width &&  Player.y > obs4.y + obs4.height) {
+        else if (Player.x === obs4.x + obs4.width && Player.y > obs4.y + obs4.height) {
             points++;
         }
     }
@@ -154,7 +153,7 @@
     }
 
     function countPoints() {
-        if(gameover===false){
+        if (gameover === false) {
             ctx.font = "20px Arial";
             ctx.fillText("Points:" + points, 500, 20);
         }
